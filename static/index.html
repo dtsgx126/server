@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>loadmore</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			font-size: 18px;
+		}
+		.ct>li{
+			border: 1px solid red;
+			margin: 20px;
+			padding: 10px;
+			border-radius: 5px;
+			list-style: none;
+			text-align: center;
+		}
+		.get{
+			background: #fff;
+			border-radius: 5px;
+			padding: 10px;
+			outline: none;
+			border:1px solid gray;
+			cursor: pointer;
+			margin:20px auto;
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<ul id="ct" class="ct">
+	</ul>
+	<button class="get">LoadMore</button>
+	<script>
+		var ct=document.querySelector('#ct')
+		var get=document.querySelector('.get')
+		var pageInx=0;
+		var isLoading=false;
+		get.addEventListener('click',function (e) {
+			e.preventDefault()
+			if (isLoading) {
+				return
+			}
+			var xhr=new XMLHttpRequest();
+			
+			xhr.onreadystatechange=function () {
+
+				if (xhr.readyState===4) {
+					if (xhr.status==200||xhr.status==304) {
+						var data=JSON.parse(xhr.responseText)
+						var fragment=document.createDocumentFragment()
+						for (var i = 0; i < data.length; i++) {
+							var li=document.createElement('li')
+							li.innerText=data[i]
+							fragment.appendChild(li)
+						}
+						ct.appendChild(fragment)
+						pageInx+=5
+					}
+				}
+				isLoading=false 
+			}
+			
+			xhr.open( 'get', '/loadmore?index='+pageInx+'&length=5',true)
+			console.log(xhr)
+			xhr.send()
+			isLoading=true
+
+		})
+		var xhr=new XMLHttpRequest()
+	</script>
+</body>
+</html>
